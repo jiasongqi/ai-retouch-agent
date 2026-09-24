@@ -2,9 +2,11 @@ import { useNavigate } from 'react-router-dom'
 
 import CapabilityShowcase from '@/components/landing/CapabilityShowcase'
 import DeliverySteps from '@/components/landing/DeliverySteps'
+import DemoReel from '@/components/landing/DemoReel'
 import LandingFooter from '@/components/landing/LandingFooter'
 import LandingHeader from '@/components/landing/LandingHeader'
 import LandingHero from '@/components/landing/LandingHero'
+import MaterialMarquee from '@/components/landing/MaterialMarquee'
 import StartBanner from '@/components/landing/StartBanner'
 import { useCurrentUser } from '@/hooks/useAuth'
 import { readPromptDraft, savePromptDraft } from '@/lib/promptDraft'
@@ -23,7 +25,7 @@ export default function LandingPage() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <LandingHeader account={user?.username ?? null} />
+      <LandingHeader account={user?.username ?? null} entry={entry} />
 
       <main className="flex-1">
         <LandingHero
@@ -31,6 +33,8 @@ export default function LandingPage() {
           submitLabel={entry.label}
           onStart={start}
         />
+        <MaterialMarquee />
+        <DemoReel />
         <CapabilityShowcase />
         <DeliverySteps />
         <StartBanner label={entry.label} to={entry.to} />

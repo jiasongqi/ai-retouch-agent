@@ -27,7 +27,7 @@ const CAPABILITIES: { title: string; desc: string; preview: ReactNode }[] = [
 
 export default function CapabilityShowcase() {
   return (
-    <section className="mx-auto max-w-5xl px-6 py-16">
+    <section id="capabilities" className="mx-auto max-w-5xl scroll-mt-20 px-6 py-16">
       <header className="max-w-xl">
         <p className="text-brand-strong text-sm font-medium">能力</p>
         <h2 className="text-ink mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">

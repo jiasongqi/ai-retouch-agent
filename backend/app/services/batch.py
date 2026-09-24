@@ -10,6 +10,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import storage
 from app.edits.pixels import adjust, encode, letterbox, remove_background
+from app.edits.studio import apply_studio_finish
+from app.listing.platforms import fit_platform
+from app.listing.scenes import composite
 from app.models import Asset, ToolRun
 from app.models.asset import AssetKind, AssetSource
 from app.models.tool_run import RunStatus
@@ -23,6 +26,7 @@ from app.services import runs
 from app.services.exports import PackedExport
 from app.services.images import probe
 from app.tools.enhance import ExpandCanvasIn, ReplaceBackgroundIn, UpscaleImageIn
+from app.tools.listing import ApplySceneIn, ApplyStudioFinishIn, PreparePlatformExportIn
 from app.tools.marketing import PrepareDeliverySizesIn
 from app.tools.retouch import AdjustIn
 
@@ -75,6 +79,35 @@ async def apply_op(data: bytes, operation: BatchOpIn) -> list[bytes]:
         parsed = PrepareDeliverySizesIn.model_validate(operation.params or {})
         ratios = _unique_ratios(parsed.ratios or list(DELIVERY_RATIOS))
         return [letterbox(data, *size_of(ratio)) for ratio in ratios]
+    if operation.tool == "apply_studio_finish":
+        parsed = ApplyStudioFinishIn.model_validate(operation.params or {})
+        return [
+            await asyncio.to_thread(
+                lambda: apply_studio_finish(
+                    data,
+                    shadow=parsed.shadow,
+                    reflection=parsed.reflection,
+                    intensity=parsed.intensity,
+                )
+            )
+        ]
+    if operation.tool == "apply_scene":
+        parsed = ApplySceneIn.model_validate(operation.params or {})
+        meta = probe(data)
+        return [
+            await asyncio.to_thread(
+                composite, data, parsed.scene_id, meta.width, meta.height
+            )
+        ]
+    if operation.tool == "prepare_platform_export":
+        parsed = PreparePlatformExportIn.model_validate(operation.params or {})
+        frames = []
+        for platform in parsed.platforms:
+            fitted = await asyncio.to_thread(
+                fit_platform, data, platform, studio=parsed.studio
+            )
+            frames.append(fitted.data)
+        return frames
     raise ValueError(f"批量不支持 {operation.tool}")
 
 

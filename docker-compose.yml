@@ -1,5 +1,25 @@
 name: ai-retouch-agent
 
+x-app-env: &app-env
+  DATABASE_URL: postgresql+asyncpg://retouch:retouch_dev@postgres:5432/retouch
+  REDIS_URL: redis://redis:6379
+  S3_ENDPOINT: http://minio:9000
+  S3_PUBLIC_ENDPOINT: http://127.0.0.1:7313
+
+x-app-build: &app-service
+  build: .
+  env_file:
+    - path: .env
+      required: false
+  environment:
+    <<: *app-env
+  volumes:
+    - cv_models:/root/.u2net
+  depends_on:
+    postgres: { condition: service_healthy }
+    redis: { condition: service_healthy }
+    minio: { condition: service_healthy }
+
 services:
   postgres:
     image: postgres:17-alpine
@@ -49,44 +69,38 @@ services:
       timeout: 3s
       retries: 10
 
-  # 以下两个仅在部署时启用：docker compose --profile deploy up -d
+  # 迁移只跑一次。full / deploy 共用。
+  migrate:
+    <<: *app-service
+    profiles: ["full", "deploy"]
+    restart: "no"
+    command: ["alembic", "upgrade", "head"]
+
+  # 一键体验：docker compose --profile full up -d --build
+  # 生产部署：docker compose --profile deploy up -d --build
   app:
-    profiles: ["deploy"]
-    build: .
+    <<: *app-service
+    profiles: ["full", "deploy"]
     restart: unless-stopped
-    command: uvicorn app.main:app --host 0.0.0.0 --port 7302
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "7302"]
     ports:
       - "7302:7302"
-    env_file: .env
-    environment:
-      DATABASE_URL: postgresql+asyncpg://retouch:retouch_dev@postgres:5432/retouch
-      REDIS_URL: redis://redis:6379
-      S3_ENDPOINT: http://minio:9000
-      S3_PUBLIC_ENDPOINT: http://localhost:7313
-    volumes:
-      - cv_models:/root/.u2net
     depends_on:
       postgres: { condition: service_healthy }
       redis: { condition: service_healthy }
       minio: { condition: service_healthy }
+      migrate: { condition: service_completed_successfully }
 
   worker:
-    profiles: ["deploy"]
-    build: .
+    <<: *app-service
+    profiles: ["full", "deploy"]
     restart: unless-stopped
-    command: arq app.worker.WorkerSettings
-    env_file: .env
-    environment:
-      DATABASE_URL: postgresql+asyncpg://retouch:retouch_dev@postgres:5432/retouch
-      REDIS_URL: redis://redis:6379
-      S3_ENDPOINT: http://minio:9000
-      S3_PUBLIC_ENDPOINT: http://localhost:7313
-    volumes:
-      - cv_models:/root/.u2net
+    command: ["arq", "app.worker.WorkerSettings"]
     depends_on:
       postgres: { condition: service_healthy }
       redis: { condition: service_healthy }
       minio: { condition: service_healthy }
+      migrate: { condition: service_completed_successfully }
 
 volumes:
   pg_data:

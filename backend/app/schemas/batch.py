@@ -14,6 +14,9 @@ BATCH_TOOLS = (
     "upscale_image",
     "expand_canvas",
     "prepare_delivery_sizes",
+    "apply_studio_finish",
+    "apply_scene",
+    "prepare_platform_export",
 )
 
 MAX_BATCH_ASSETS = 20
@@ -28,6 +31,9 @@ class BatchOpIn(BaseModel):
         "upscale_image",
         "expand_canvas",
         "prepare_delivery_sizes",
+        "apply_studio_finish",
+        "apply_scene",
+        "prepare_platform_export",
     ]
     params: dict = Field(default_factory=dict)
 

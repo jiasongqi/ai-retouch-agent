@@ -4,10 +4,12 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import type { Asset } from '@/api/assets'
 import { isTerminal } from '@/api/runs'
 import ImageDropzone from '@/components/ImageDropzone'
+import ScenePicker from '@/components/ScenePicker'
 import ProgressBar from '@/components/ui/ProgressBar'
 import { useCreateBatch, useBatch, useBatches, useExportBatch } from '@/hooks/useBatch'
 import { errorMessage } from '@/hooks/useAuth'
 import { useAssetLibrary, useUploadAsset } from '@/hooks/useAssets'
+import { useScenes } from '@/hooks/useCatalog'
 import { formatDateTime } from '@/lib/format'
 import {
   BATCH_STEPS,
@@ -60,7 +62,7 @@ function Compose() {
     <div className="mx-auto max-w-5xl px-8 py-10">
       <h1 className="text-ink text-2xl font-semibold tracking-tight">批量</h1>
       <p className="text-muted mt-1 mb-8 text-sm">
-        对多张图走同一套像素处理：去背景、换背景、调色、超分、扩图、投放尺寸。
+        对多张图走同一套像素处理：去背景、换背景、调色、超分、扩图、投放尺寸、影棚精修、铺场景、平台导出。
       </p>
 
       <section className="mb-8">
@@ -260,6 +262,7 @@ function Pipeline({
   draft: BatchDraft
   onChange: (draft: BatchDraft) => void
 }) {
+  const { data: scenes = [] } = useScenes()
   const toggle = (id: BatchTool) => {
     const selected = draft.selected.includes(id)
       ? draft.selected.filter((item) => item !== id)
@@ -376,6 +379,44 @@ function Pipeline({
                       }`}
                     >
                       {ratio}
+                    </button>
+                  ))}
+                </div>
+              )}
+              {on && step.id === 'apply_scene' && (
+                <div className="mt-3">
+                  <ScenePicker
+                    scenes={scenes}
+                    selected={draft.sceneId}
+                    onSelect={(sceneId) => onChange({ ...draft, sceneId })}
+                  />
+                </div>
+              )}
+              {on && step.id === 'prepare_platform_export' && (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {(
+                    [
+                      ['taobao_main', '淘宝主图'],
+                      ['amazon_main', '亚马逊主图'],
+                      ['douyin_cover', '抖音封面'],
+                    ] as const
+                  ).map(([id, label]) => (
+                    <button
+                      key={id}
+                      type="button"
+                      onClick={() => {
+                        const platforms = draft.platforms.includes(id)
+                          ? draft.platforms.filter((item) => item !== id)
+                          : [...draft.platforms, id]
+                        onChange({ ...draft, platforms })
+                      }}
+                      className={`rounded-control px-3 py-1.5 text-xs ${
+                        draft.platforms.includes(id)
+                          ? 'bg-ink text-white'
+                          : 'border-line text-muted border'
+                      }`}
+                    >
+                      {label}
                     </button>
                   ))}
                 </div>

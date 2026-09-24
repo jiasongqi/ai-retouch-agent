@@ -620,3 +620,22 @@ async def test_prepare_delivery_sizes_covers_three_ratios(signed_in: httpx.Async
     assert updated["current_asset_id"] == session["current_asset_id"]
     assert updated["revision"] == 1
     assert sizes == {(1080, 1080), (1080, 1350), (1080, 1920)}
+
+
+async def test_studio_finish_rewrites_the_layer(signed_in: httpx.AsyncClient):
+    session = await open_session(signed_in)
+    before = session["document"]["layers"][0]["asset_id"]
+    updated = await apply(signed_in, session["id"], "apply_studio_finish")
+    assert updated["revision"] == 2
+    assert updated["document"]["layers"][0]["asset_id"] != before
+
+
+async def test_platform_export_stays_on_the_wall(signed_in: httpx.AsyncClient):
+    session = await open_session(signed_in)
+    updated = await apply(
+        signed_in, session["id"], "prepare_platform_export", {"platforms": ["taobao_main"]}
+    )
+    exported = [asset for asset in updated["assets"] if asset["kind"] == "export"]
+    assert updated["current_asset_id"] == session["current_asset_id"]
+    assert updated["revision"] == 1
+    assert exported[-1]["width"] == exported[-1]["height"] == 1200

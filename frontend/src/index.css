@@ -40,6 +40,9 @@
   --animate-slide-in: slide-in 0.26s cubic-bezier(0.22, 1, 0.36, 1) both;
   --animate-slide-out: slide-out 0.2s ease-in both;
   --animate-fade-in: fade-in 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-studio-wipe: studio-wipe 8s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  --animate-studio-divider: studio-divider 8s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  --animate-marquee: marquee-x 48s linear infinite;
 
   @keyframes rise {
     from {
@@ -104,11 +107,49 @@
       opacity: 1;
     }
   }
+
+  @keyframes studio-wipe {
+    0%,
+    14% {
+      clip-path: inset(0 22% 0 0);
+    }
+    48%,
+    64% {
+      clip-path: inset(0 64% 0 0);
+    }
+    100% {
+      clip-path: inset(0 22% 0 0);
+    }
+  }
+
+  @keyframes studio-divider {
+    0%,
+    14% {
+      left: 78%;
+    }
+    48%,
+    64% {
+      left: 36%;
+    }
+    100% {
+      left: 78%;
+    }
+  }
+
+  @keyframes marquee-x {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
 }
 
 @layer base {
   html {
     -webkit-font-smoothing: antialiased;
+    scroll-behavior: smooth;
   }
 
   body {
@@ -157,11 +198,22 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
     *,
     *::before,
     *::after {
       animation-duration: 0.01ms !important;
       transition-duration: 0.01ms !important;
+    }
+
+    /* 无限循环动画不能靠缩短时长，否则会闪成残影 */
+    .animate-marquee,
+    .animate-studio-wipe,
+    .animate-studio-divider {
+      animation: none !important;
     }
   }
 }

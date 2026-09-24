@@ -58,6 +58,18 @@ def test_delivery_sizes_match_ratios():
     assert size_score(outputs[1][1], 1080, 1920) == 1
 
 
+def test_studio_finish_keeps_input_size():
+    _, output = run_task("apply_studio_finish", _subject())[0]
+    image = Image.open(io.BytesIO(output))
+    assert image.size == (200, 120)
+
+
+def test_platform_export_matches_preset():
+    outputs = run_task("prepare_platform_export", _subject(), {"platforms": ["taobao_main"]})
+    assert outputs[0][0] == "taobao_main"
+    assert size_score(outputs[0][1], 1200, 1200) == 1
+
+
 def test_threshold_direction():
     assert passes("mae", 3, 12)
     assert not passes("mae", 13, 12)

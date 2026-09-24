@@ -7,7 +7,7 @@ const STEPS = [
 
 export default function DeliverySteps() {
   return (
-    <section className="mx-auto max-w-5xl px-6 pb-16">
+    <section id="delivery" className="mx-auto max-w-5xl scroll-mt-20 px-6 pb-16">
       <ol className="border-line bg-paper rounded-card divide-line grid divide-y border sm:grid-cols-4 sm:divide-x sm:divide-y-0">
         {STEPS.map((step, index) => (
           <li key={step.title} className="p-6">

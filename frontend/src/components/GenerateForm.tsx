@@ -1,6 +1,8 @@
 import { useState } from 'react'
 
 import { RATIO_LABELS, type GenerateInput, type Ratio } from '@/api/runs'
+import TemplateChips from '@/components/TemplateChips'
+import { PROMPT_TEMPLATES } from '@/lib/templates'
 
 const RATIOS = Object.keys(RATIO_LABELS) as Ratio[]
 const COUNTS = [1, 2, 4, 6]
@@ -50,6 +52,17 @@ export default function GenerateForm({
         aria-label="画面描述"
         className="text-ink placeholder:text-faint w-full resize-none bg-transparent px-4 pt-3 pb-1 text-[15px] leading-relaxed outline-none"
       />
+
+      <div className="px-3 pb-2">
+        <TemplateChips
+          templates={PROMPT_TEMPLATES}
+          align="start"
+          onPick={(template) => {
+            setPrompt(template.prompt)
+            setRatio(template.ratio)
+          }}
+        />
+      </div>
 
       <div className="flex flex-wrap items-center gap-2 px-2 pb-1">
         <Segmented

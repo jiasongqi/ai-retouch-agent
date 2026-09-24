@@ -102,6 +102,10 @@ export const ACTION_LABELS: Record<string, string> = {
   promote_object_to_layer: '提升为图层',
   generate_marketing: '营销图',
   prepare_delivery_sizes: '投放尺寸',
+  apply_studio_finish: '影棚精修',
+  apply_scene: '铺场景',
+  prepare_platform_export: '平台导出',
+  export_listing_pack: '一键套图',
 }
 
 export type ExportPack = {

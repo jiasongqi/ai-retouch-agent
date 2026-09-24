@@ -2,11 +2,14 @@ import { useMemo, useState, type ReactNode } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 
 import AssetLibrary from '@/components/AssetLibrary'
+import BrandKitForm from '@/components/BrandKitForm'
 import ProgressBar from '@/components/ui/ProgressBar'
+import ScenePicker from '@/components/ScenePicker'
 import type { Asset } from '@/api/assets'
 import type { SessionDetail } from '@/api/sessions'
 import { errorMessage } from '@/hooks/useAuth'
 import { useAssetLibrary } from '@/hooks/useAssets'
+import { useBrandKit, usePlatforms, useSaveBrandKit, useScenes } from '@/hooks/useCatalog'
 import { useCreateSession, useExportPack, useSession, useSessionTools, useSessions } from '@/hooks/useSessions'
 import { shortTitle } from '@/lib/format'
 import {
@@ -65,8 +68,14 @@ function Workspace({ sessionId }: { sessionId: string }) {
   const { data: session, isError } = useSession(sessionId)
   const tools = useSessionTools(sessionId)
   const pack = useExportPack(sessionId)
+  const { data: scenes = [] } = useScenes()
+  const { data: platforms = [] } = usePlatforms()
+  const { data: brandKit } = useBrandKit()
+  const saveKit = useSaveBrandKit()
   const [copy, setCopy] = useState('')
   const [picked, setPicked] = useState<string[] | null>(null)
+  const [caption, setCaption] = useState('核心卖点')
+  const [sceneId, setSceneId] = useState<string | null>(null)
 
   const selected = useMemo(() => {
     if (!session) return []
@@ -150,6 +159,101 @@ function Workspace({ sessionId }: { sessionId: string }) {
           </p>
         </div>
         <SessionSwitch currentId={sessionId} />
+      </section>
+
+      <section className="mb-8">
+        <SectionHead title="一键套图" hint="白底主图 + 场景图 + 卖点图 + 9:16 封面，进图片墙后可打包。" />
+        <div className="flex flex-wrap items-center gap-2">
+          <input
+            value={caption}
+            onChange={(event) => setCaption(event.target.value)}
+            disabled={tools.busy}
+            placeholder="卖点文案，例如「72 小时锁水」"
+            className="border-line text-ink placeholder:text-faint rounded-control w-full max-w-sm border px-3 py-2 text-sm outline-none"
+          />
+          <button
+            type="button"
+            disabled={tools.busy}
+            onClick={() =>
+              tools.invoke('export_listing_pack', {
+                caption: caption.trim() || '核心卖点',
+                scene_id: sceneId || brandKit?.default_scene_id || undefined,
+              })
+            }
+            className="bg-ink hover:bg-dark rounded-control px-3.5 py-2 text-xs font-medium text-white disabled:opacity-40"
+          >
+            {tools.isRunning('export_listing_pack') ? '生成中…' : '一键套图'}
+          </button>
+        </div>
+      </section>
+
+      <section className="mb-8">
+        <SectionHead
+          title="影棚与平台画幅"
+          hint="先补接触阴影，再按淘宝 / 亚马逊 / 抖音主图规范导出。"
+        />
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            disabled={tools.busy}
+            onClick={() => tools.invoke('apply_studio_finish')}
+            className="border-line text-muted hover:text-ink rounded-control border px-3 py-2 text-xs disabled:opacity-40"
+          >
+            {tools.isRunning('apply_studio_finish') ? '精修中…' : '影棚精修'}
+          </button>
+          <button
+            type="button"
+            disabled={tools.busy}
+            onClick={() => tools.invoke('prepare_platform_export')}
+            className="bg-ink hover:bg-dark rounded-control px-3.5 py-2 text-xs font-medium text-white disabled:opacity-40"
+          >
+            {tools.isRunning('prepare_platform_export', (params) => !params.platforms)
+              ? '导出中…'
+              : '三个平台一次出'}
+          </button>
+          {platforms.map((platform) => (
+            <button
+              key={platform.id}
+              type="button"
+              disabled={tools.busy}
+              title={platform.hint}
+              onClick={() =>
+                tools.invoke('prepare_platform_export', { platforms: [platform.id] })
+              }
+              className="border-line text-muted hover:text-ink rounded-control border px-3 py-2 text-xs disabled:opacity-40"
+            >
+              {platform.label}
+              <span className="text-faint ml-1">
+                {platform.width}×{platform.height}
+              </span>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section className="mb-8">
+        <SectionHead title="场景库" hint="点选即铺到当前画布，不调模型。拆层后只换背景层。" />
+        <ScenePicker
+          scenes={scenes}
+          selected={sceneId}
+          disabled={tools.busy}
+          onSelect={(id) => {
+            setSceneId(id)
+            tools.invoke('apply_scene', { scene_id: id })
+          }}
+        />
+      </section>
+
+      <section className="mb-8">
+        <SectionHead title="Brand Kit" hint="主色、安全边距和角标会套到平台导出与一键套图上。" />
+        <BrandKitForm
+          value={brandKit}
+          scenes={scenes}
+          assets={session.assets}
+          disabled={tools.busy}
+          saving={saveKit.isPending}
+          onSave={(kit) => saveKit.mutate(kit)}
+        />
       </section>
 
       <section className="mb-8">
@@ -252,7 +356,7 @@ function PageTitle({ action }: { action?: ReactNode }) {
         {action}
       </div>
       <p className="text-muted mt-1 max-w-xl text-sm">
-        从当前会话出四类营销图和投放尺寸，再打包下载。
+        从当前会话出影棚精修、平台主图和一套可上架物料，再打包下载。
       </p>
     </header>
   )

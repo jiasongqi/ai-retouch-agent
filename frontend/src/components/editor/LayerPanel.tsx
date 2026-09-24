@@ -67,6 +67,9 @@ export default function LayerPanel({
           disabled={tools.busy}
           wallOnly={onlyToWall}
           onApply={(params) => tools.invoke('replace_background', params)}
+          onScene={(sceneId) =>
+            tools.invoke('apply_scene', { scene_id: sceneId, layer_id: selectedLayerId })
+          }
         />
       )}
       {panel === 'expand' && (

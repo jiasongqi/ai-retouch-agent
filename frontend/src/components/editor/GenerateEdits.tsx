@@ -1,7 +1,9 @@
 import { useState } from 'react'
 
 import type { Ratio } from '@/api/runs'
+import ScenePicker from '@/components/ScenePicker'
 import Button from '@/components/ui/Button'
+import { useScenes } from '@/hooks/useCatalog'
 
 const RATIOS: { value: Ratio; label: string }[] = [
   { value: '1:1', label: '1:1' },
@@ -18,13 +20,16 @@ export function BackgroundForm({
   disabled,
   wallOnly,
   onApply,
+  onScene,
 }: {
   disabled: boolean
   wallOnly: boolean
   onApply: (params: { prompt: string; count: number }) => void
+  onScene?: (sceneId: string) => void
 }) {
   const [prompt, setPrompt] = useState('')
   const [count, setCount] = useState(1)
+  const { data: scenes = [] } = useScenes()
   const ready = prompt.trim().length > 0
 
   return (
@@ -35,6 +40,12 @@ export function BackgroundForm({
           ? '写出新背景。已拆层，结果拍平成整图只进图片墙，点选采用；画布与图层保持不变。'
           : '写出新背景。一张直接上画布；多张进图片墙，点选采用。'}
       </p>
+      {onScene && scenes.length > 0 && (
+        <div className="mb-3">
+          <p className="text-muted mb-1.5 text-[11px]">场景库（本地合成）</p>
+          <ScenePicker scenes={scenes} disabled={disabled} onSelect={onScene} />
+        </div>
+      )}
       <textarea
         rows={3}
         value={prompt}

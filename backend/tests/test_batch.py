@@ -93,3 +93,13 @@ async def test_batch_list_returns_recent_jobs(signed_in: httpx.AsyncClient):
 
     body = (await signed_in.get("/api/batches")).json()
     assert body[0]["run"]["id"] == run["id"]
+
+
+async def test_batch_studio_finish(signed_in: httpx.AsyncClient):
+    asset_id = await upload(signed_in)
+    run = await start_batch(signed_in, [asset_id], [{"tool": "apply_studio_finish", "params": {}}])
+    await run_tool({}, uuid.UUID(run["id"]))
+    body = (await signed_in.get(f"/api/batches/{run['id']}")).json()
+    assert body["run"]["status"] == "succeeded"
+    assert body["items"][0]["status"] == "succeeded"
+    assert len(body["items"][0]["outputs"]) == 1

@@ -188,6 +188,14 @@ export default function EditorToolbar({
             </Button>
             <Button
               disabled={tools.busy}
+              progress={running('apply_studio_finish')}
+              title="补接触阴影和倒影"
+              onClick={() => tools.invoke('apply_studio_finish', { layer_id: ui.selectedLayerId })}
+            >
+              影棚
+            </Button>
+            <Button
+              disabled={tools.busy}
               active={ui.panel === 'background'}
               title="按描述替换背景"
               onClick={() => ui.setPanel(ui.panel === 'background' ? null : 'background')}
