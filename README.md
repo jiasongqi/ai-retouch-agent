@@ -23,17 +23,14 @@
   <a href="#核心能力">核心能力</a> ·
   <a href="#架构">架构</a> ·
   <a href="#roadmap">Roadmap</a> ·
-  <a href="https://www.codefather.cn/vip">加入学习</a>
+  <a href="#教学资料">教学资料</a>
 </p>
-
-![落地页](https://pic.yupi.icu/pine/image-20260901150955859.png)
 
 <p align="center">
   <img src="frontend/public/landing/demo.gif" alt="从杂乱原图编排到白底主图、场景图、竖版与海报" width="520" />
 </p>
 
-> 教学项目：完整文字教程 + 简历写法 + 面试题解 + 答疑。  
-> 加入系列学习：[编程导航](https://www.codefather.cn/vip)
+> 教学项目：[文字教程](docs/TUTORIAL.md) · [简历写法](docs/RESUME.md) · [面试题解](docs/INTERVIEW.md) · [答疑](docs/FAQ.md)
 
 ## 这是什么
 
@@ -75,11 +72,11 @@
 
 </details>
 
-![候选四宫格](https://pic.yupi.icu/pine/image-20260901142856191.png)
-
-![画布编辑器](https://pic.yupi.icu/pine/image-20260831153713493.png)
-
-![Agent 对话修图](https://pic.yupi.icu/pine/image-20260831155606100.png)
+<p align="center">
+  <img src="frontend/public/landing/product-before.png" width="280" alt="修前原图" />
+  <img src="frontend/public/landing/product-after.png" width="280" alt="修后白底主图" />
+  <img src="frontend/public/landing/product-scene.png" width="280" alt="场景图" />
+</p>
 
 ## 架构
 
@@ -115,8 +112,6 @@ flowchart LR
   → 画布更新图层与像素
 ```
 
-![系统架构](https://pic.yupi.icu/pine/system-architecture.png)
-
 ## 技术栈
 
 | 层 | 选型 |
@@ -131,7 +126,7 @@ flowchart LR
 
 ## 快速开始
 
-完整保姆级步骤：[本地运行指南](https://www.codefather.cn/course/2099386518517915649/section/2099389234463973378)
+跟着做一遍：[文字教程](docs/TUTORIAL.md)。下面是最短启动路径。
 
 ### 环境
 
@@ -290,6 +285,7 @@ ai-retouch-agent/
 │       ├── providers/        # mock / DashScope
 │       ├── tasks/            # ARQ Worker
 │       └── eval/             # 抠图 IoU、调色 PSNR 等回归
+├── docs/                     # 文字教程 / 简历写法 / 面试题解 / 答疑
 ├── docker-compose.yml
 ├── Dockerfile
 ├── up.cmd / up.sh            # 一键拉起 API + Worker + 前端
@@ -340,23 +336,16 @@ ai-retouch-agent/
 - SAM 点选、语义拆层、计划校验与拓扑排序
 - Docker 多阶段构建与 compose profile
 
-![功能模块](https://pic.yupi.icu/pine/feature-modules.png)
+## 教学资料
 
-## 加入项目学习
+本仓库文档：
 
-编程导航已有近 30 套项目教程，本项目可全程跟学，并提供：
-
-| 教程 | 求职 |
+| 文档 | 内容 |
 | --- | --- |
-| 文字教程 / 直播笔记 / 完整源码 | 现成简历写法 |
-| 1 对 1 答疑 + 交流群 | 面试题解和真实面经 |
-| 前端 + 后端项目模板 | 扩展思路，拉开区分度 |
-
-[查看教程](https://www.codefather.cn/course) · [加入编程导航](https://www.codefather.cn/vip)（三天内不满意可退）
-
-<p align="center">
-  <img src="https://pic.yupi.icu/1/437345684-56411098-b60e-4267-8ba2-4ebc5d416afc.png" width="280" alt="编程导航优惠券" />
-</p>
+| [文字教程](docs/TUTORIAL.md) | 从启动到出一套上架图，再顺着代码走一遍请求链路 |
+| [简历写法](docs/RESUME.md) | 项目一句话、STAR 示例、可写的个人贡献 |
+| [面试题解](docs/INTERVIEW.md) | Agent 规划、工具注册表、SSE、计划校验等高频问答 |
+| [答疑](docs/FAQ.md) | 端口打不开、mock / 真模型、密钥、部署常见问题 |
 
 ## Star History
 
