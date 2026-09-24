@@ -14,6 +14,8 @@ docs/*
 !docs/RESUME.md
 !docs/INTERVIEW.md
 !docs/FAQ.md
+!docs/learn/
+!docs/learn/**
 
 # 用户评测素材
 evals/

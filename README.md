@@ -30,7 +30,7 @@
   <img src="frontend/public/landing/demo.gif" alt="从杂乱原图编排到白底主图、场景图、竖版与海报" width="520" />
 </p>
 
-> 教学项目：[文字教程](docs/TUTORIAL.md) · [简历写法](docs/RESUME.md) · [面试题解](docs/INTERVIEW.md) · [答疑](docs/FAQ.md)
+> 教学项目：[文字教程](docs/TUTORIAL.md) · [学习笔记](docs/learn/README.md) · [简历写法](docs/RESUME.md) · [面试题解](docs/INTERVIEW.md) · [答疑](docs/FAQ.md)
 
 ## 这是什么
 
@@ -285,7 +285,7 @@ ai-retouch-agent/
 │       ├── providers/        # mock / DashScope
 │       ├── tasks/            # ARQ Worker
 │       └── eval/             # 抠图 IoU、调色 PSNR 等回归
-├── docs/                     # 文字教程 / 简历写法 / 面试题解 / 答疑
+├── docs/                     # 文字教程 / 简历 / 面试 / 答疑 / 学习笔记
 ├── docker-compose.yml
 ├── Dockerfile
 ├── up.cmd / up.sh            # 一键拉起 API + Worker + 前端
@@ -325,16 +325,18 @@ ai-retouch-agent/
 
 ## 你能学到什么
 
-选题跟的是 AI Agent + AIGC，不是增删改查。一条链路里同时有：
+选题跟的是 AI Agent + AIGC，不是增删改查。一条链路里同时有（每条都有跟读笔记）：
 
-- FastAPI + SQLAlchemy + JWT Cookie
-- Provider 抽象：一行配置切换 mock / 真模型
-- ARQ + Redis Pub/Sub + SSE 实时进度
-- react-konva 图层文档与视口
-- LangChain 接模型、LangGraph 编排计划
-- 统一工具注册表
-- SAM 点选、语义拆层、计划校验与拓扑排序
-- Docker 多阶段构建与 compose profile
+- [FastAPI + SQLAlchemy + JWT Cookie](docs/learn/01-fastapi-sqlalchemy-jwt.md)
+- [Provider 抽象：一行配置切换 mock / 真模型](docs/learn/02-provider.md)
+- [ARQ + Redis Pub/Sub + SSE 实时进度](docs/learn/03-arq-sse.md)
+- [react-konva 图层文档与视口](docs/learn/04-konva.md)
+- [LangChain 接模型、LangGraph 编排计划](docs/learn/05-langgraph.md)
+- [统一工具注册表](docs/learn/06-tool-registry.md)
+- [SAM 点选、语义拆层、计划校验与拓扑排序](docs/learn/07-sam-plan.md)
+- [Docker 多阶段构建与 compose profile](docs/learn/08-docker.md)
+
+目录：[docs/learn](docs/learn/README.md)
 
 ## 教学资料
 
@@ -343,6 +345,7 @@ ai-retouch-agent/
 | 文档 | 内容 |
 | --- | --- |
 | [文字教程](docs/TUTORIAL.md) | 从启动到出一套上架图，再顺着代码走一遍请求链路 |
+| [学习笔记](docs/learn/README.md) | FastAPI、Provider、SSE、Konva、LangGraph、工具表、SAM、Docker |
 | [简历写法](docs/RESUME.md) | 项目一句话、STAR 示例、可写的个人贡献 |
 | [面试题解](docs/INTERVIEW.md) | Agent 规划、工具注册表、SSE、计划校验等高频问答 |
 | [答疑](docs/FAQ.md) | 端口打不开、mock / 真模型、密钥、部署常见问题 |

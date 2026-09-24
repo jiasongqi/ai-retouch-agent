@@ -65,4 +65,5 @@
 
 - 简历怎么写：[RESUME.md](RESUME.md)
 - 面试怎么答：[INTERVIEW.md](INTERVIEW.md)
+- 八条技术跟读：[learn/README.md](learn/README.md)
 - 启动与部署卡住了：[FAQ.md](FAQ.md)
